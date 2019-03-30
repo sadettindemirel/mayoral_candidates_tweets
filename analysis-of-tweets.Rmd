@@ -1,0 +1,104 @@
+---
+title: "Popularity of Mayoral Candidates in Twitter"
+author: "Sadettin Demirel"
+date: "3/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Preparation (Packages)
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readr)
+```
+
+#### 1. Getting Data
+
+The dataset that includes candidates' tweets between February 1st and March 10th. It was retrieved from Twitter API with help of the rtweet package. [This code vignette explains how I downloaded the Twitter data](https://rtweet.info/index.html). The raw data can be accessed through [Github repo](https://github.com/sadettindemirel/mayoral_candidates_tweets) for this work. 
+
+```{r}
+
+all_mayors_tweets <- readRDS("~/Desktop/tweets/rds_data/all_mayors_tweets.rds")
+
+#and let's remove the retweets and used the complete name of candidates
+mayors_tweets <- all_mayors_tweets %>% filter(is_retweet ==FALSE) %>% mutate(screen_name = recode(screen_name, "BA_Yildirim"="Binali Yıldırım", "ekrem_imamoglu" = "Ekrem İmamoğlu", "mansuryavas06" = "Mansur Yavaş","mehmetozhaseki"="Mehmet Özhaseki","ZeybekciNihat"= "Nihat Zeybekçi","tuncsoyer"="Tunç Soyer"))
+
+```
+
+
+Let's specify our theme and customize it (we'll use it later)
+```{r}
+theme_custom1 <- function() {
+  theme_minimal() +
+    theme(
+      text = element_text(family = "Proxima Nova", color = "gray25"),
+      plot.title = element_text(face = "bold",size = 14),
+      plot.subtitle = element_text(size = 13),
+      axis.text.x= element_text(size=11),
+      axis.text.y = element_text(size=11),
+      plot.caption = element_text(size = 11, color = "gray30"),
+      plot.background = element_rect(fill = "#f6f5f5"),
+      legend.position = "none",
+      strip.background = element_rect(colour = "#d9d9d9", fill = "#d9d9d9"),
+      strip.text.x = element_text(size = 11, colour = "gray25", face = "bold"))
+  
+}
+```
+
+Lastly, choose Color Palette (we'll use it for charts), one color per alliance
+```{r}
+custom_col <- c("Binali Yıldırım" = "#e67d31",
+                "Ekrem İmamoğlu" = "#3c841d",
+                "Mansur Yavaş" = "#3c841d",
+                "Mehmet Özhaseki" = "#e67d31")
+```
+
+#### 2. Analysis of Tweets
+
+This analysis will only focus on mayoral candidates in Ankara and Istanbul in the upcoming March 31th Local Election in Turkey.
+Let's first look at the average number of likes candidates got. The table below shows Mansur Yavas has the highest number of likes.
+
+```{r}
+mayors_tweets %>% group_by(screen_name)%>% summarise(average_like = mean(favorite_count)) %>% arrange(average_like)
+```
+
+Another calculation shows that Binali Yıldırım posted more tweest per day among the mayoral candidates.
+
+```{r echo=TRUE}
+ mayors_tweets %>% count(city,screen_name, sort = TRUE) %>% mutate(tweet_per_day = n/38)
+```
+
+##### **a. Candidates in İstanbul**
+
+Let's look at the daily number likes per tweets (based on their followers' number) of mayoral candidates in İstanbul. As can be seen chart below, Imamoğlu has the highest number of likes per day based on the followers number.
+
+```{r echo=TRUE}
+mayors_tweets %>% filter(city == "İstanbul") %>% mutate(popularity = favorite_count/followers_count) %>% ggplot(aes(date2, popularity, color = screen_name))+geom_line(size=0.8, show.legend = FALSE) +geom_point(show.legend = FALSE) +facet_wrap(~screen_name)+theme_custom1()+scale_color_manual(values = custom_col)
+```
+
+Also to see the trends of popularity (likes) over time, let's look at the smoothed lines, which represent the local regression between date and popularity variables. 
+
+```{r echo=TRUE}
+#smoothing the lines
+mayors_tweets %>% filter(city == "İstanbul") %>% mutate(popularity = retweet_count/followers_count) %>% ggplot(aes(date2,popularity, color = screen_name)) +geom_jitter(size = 3,alpha =0.2, show.legend = FALSE)+theme_custom1() +facet_wrap(~screen_name)+  geom_smooth(show.legend = FALSE)+scale_color_manual(values = custom_col)+labs( x="", y="", title = "Twitter Popularity of Candidates in İstanbul Based on Their Followers",subtitle ="Includes tweets between February 1st and March 10th")
+```
+
+##### **b. Candidates in Ankara**
+
+We can do the same analysis by filtering the city to "Ankara" and repeating the same steps.
+
+```{r echo=TRUE}
+mayors_tweets %>% filter(city == "Ankara") %>% mutate(popularity = favorite_count/followers_count) %>% ggplot(aes(date2, popularity, color = screen_name))+geom_line(size=0.8, show.legend = FALSE) +geom_point(show.legend = FALSE) +facet_wrap(~screen_name)+theme_custom1()+scale_color_manual(values = custom_col)
+```
+
+
+In order to see the main trend, we employ a regressian analysis which yields a trends over time
+
+```{r}
+mayors_tweets %>% filter(city == "Ankara") %>% mutate(popularity = favorite_count/followers_count) %>% ggplot(aes(date2,popularity, color = screen_name)) +geom_jitter(size = 3,alpha =0.2, show.legend = FALSE)+theme_custom1() +facet_wrap(~screen_name)+  geom_smooth(show.legend = FALSE)+scale_color_manual(values = custom_col)+labs( x="", y="", title = "Twitter Popularity of Candidates in Ankara Based on Their Followers",subtitle ="Includes tweets between February 1st and March 10th")
+```
+
+* Datasets are at [Github repo](https://github.com/sadettindemirel/mayoral_candidates_tweets)
