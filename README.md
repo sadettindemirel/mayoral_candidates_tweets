@@ -15,7 +15,7 @@ Between candidate’s tweets data that we grabbed include number of likes, retwe
 Metrics  = average(number of likes)
 
 **Daily Popularity Score (based on the number of followers)**
-→ The second method is devised to make more sophisticated analysis. We  calculated the daily popularity score based on followers’ number of candidates, by dividing the number of likes per tweet. In this case the results are fairer than first method, because it measures popularity of candidates by dividing the number of likes into their followers’ number. 
+→ The second method is devised to make more sophisticated analysis. I calculated the daily popularity score based on followers’ number of candidates, by dividing the number of likes per tweet. In this case the results are fairer than first method, because it measures popularity of candidates by dividing the number of likes into their followers’ number. 
 
 Metrics = (number of likes)/followers count
 
