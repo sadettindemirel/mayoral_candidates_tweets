@@ -21,5 +21,6 @@ Metrics = (number of likes)/followers count
 
 The data sets that were used in this analysis can be reused by anyone freely. Tweet data was retrived from Twitter REST API by using rtweet package.
 
-**[Click to reach out Detailed analysis](https://sadettindemirel.github.io/mayoral_candidates_tweets/analysis-of-tweets.html)**
+* **[Click to reach out Detailed analysis](https://sadettindemirel.github.io/mayoral_candidates_tweets/analysis-of-tweets.html)**
+* **[Clik to read detailed news article](https://verijurnali.blogspot.com/2019/03/how-popular-are-mayoral-candidates-for.html)**
 
