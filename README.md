@@ -1,4 +1,4 @@
-Analyzing Mayoral Candidates of Ankara and İzmir
+Analyzing Mayoral Candidates of Ankara and İstanbul
 ================
 
 This work had been done for Data Journalism Project assignment of Master program in Investigative Journalism at University of Gothenburg. The project focused on the Twitter popularity of mayoral candidates in İstanbul and Ankara for the upcoming local election on March 31th.
